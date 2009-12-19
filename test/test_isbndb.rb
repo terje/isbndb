@@ -1,16 +1,17 @@
 require 'helper'
+require 'yaml'
 
 class TestIsbndb < Test::Unit::TestCase
   context "ISBNDb" do
-    APIKEY = 'XXXXXXXX'
-
     setup do
-      #@isbndb = ISBNDb.new(APIKEY)
-      ISBNDb::key = APIKEY
+      flunk 'Copy test/config-example.yml to test/config.yml and change the key to your own' unless File.exist?('test/config.yml')
+      @apikey = YAML::load(File.open('test/config.yml'))['apikey']
+      flunk 'Put your ISBNDb API key in test/config.yml to run these tests' if @apikey.nil?
+      ISBNDb::key = @apikey
     end
 
     should 'store correct API key' do
-      assert_equal ISBNDb::key, APIKEY
+      assert_equal ISBNDb::key, @apikey
     end
 
     should 'return a list of authors from a search query' do

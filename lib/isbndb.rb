@@ -81,6 +81,7 @@ module ISBNDb
     # found at http://isbndb.com/docs/api/
     def self.url(path, params)
       # Add the API key to the URL
+      raise 'You need an API key at ISBNDb to use this gem' if ISBNDb::key.nil?
       params[:access_key] = ISBNDb::key
       URI.parse(ISBNDb::root_url + path + '?' + params.collect { |key, value| key.to_s + '=' + CGI.escape(value) }.join('&'))
     end
