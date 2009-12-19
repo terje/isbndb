@@ -1,6 +1,6 @@
 = isbndb
 
-Description goes here.
+This gem is in early development, but will provide an interface to the API at isbndb.com
 
 == Note on Patches/Pull Requests
  
