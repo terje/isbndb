@@ -2,7 +2,7 @@ require 'helper'
 
 class TestIsbndb < Test::Unit::TestCase
   context "A User instance" do
-    APIKEY = 'T32ZCXA4'
+    APIKEY = 'XXXXXXXX'
 
     setup do
       @isbndb = ISBNDb.new(APIKEY)
