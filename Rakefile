@@ -5,8 +5,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "isbndb"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{A gem to query the isbndb.com API}
+    gem.description = %Q{This gem has convenience methods for querying the isbndb.com API.}
     gem.email = "terje@tjervaag.com"
     gem.homepage = "http://github.com/terje/isbndb"
     gem.authors = ["terje"]
