@@ -1,6 +1,16 @@
 = isbndb
 
-This gem is in early development, but will provide an interface to the API at isbndb.com
+This gem is in **VERY** early development, but will provide an interface to the API at isbndb.com
+
+== Example usage
+
+    require 'ISBNDb'
+    # Set up your ISBNDb key (Get one at http://isbndb.com/account/dev/keys/)
+    ISBNDb::DB::key = 'YOUR_API_KEY'
+    # Look for an author
+    puts ISBNDb::DB::authors('Dawkins, Richard')
+    # Get books by an author
+    puts ISBNDb::DB::books_by_author('Dawkins, Richard')
 
 == Note on Patches/Pull Requests
  
@@ -14,4 +24,4 @@ This gem is in early development, but will provide an interface to the API at is
 
 == Copyright
 
-Copyright (c) 2009 terje. See LICENSE for details.
+Copyright (c) 2009 Terje Tjervaag. See LICENSE for details.
