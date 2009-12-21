@@ -38,9 +38,10 @@ module ISBNDb
     # Returns a list of Authors matching the provided search string
     def self.authors(query)
       doc = Util::fetch_xml(Util::url('authors.xml', {:index1 => 'name', :value1 => query}))
-      XPath.match(doc.root, 'AuthorList/AuthorData').collect do |node|
+      results = XPath.match(doc.root, 'AuthorList/AuthorData').collect do |node|
         Author.new(node.attributes['person_id'], node.text('Name').to_s)
       end
+      {:results => results, :pagination => Util::pagination('AuthorList', doc)}
     end
 
     # Returns a list of books matching the given search query.  The search_key can
@@ -48,9 +49,10 @@ module ISBNDb
     # subject_id, dewey_decimal, lcc_number
     def self.books(search_key, query)
       doc = Util::fetch_xml(Util::url('books.xml', {:index1 => search_key, :value1 => query}))
-      XPath.match(doc.root, "BookList/BookData").collect do |node|
+      results = XPath.match(doc.root, "BookList/BookData").collect do |node|
         Book.new(node.text('Title'), node.text('TitleLong'), node.text('AuthorsText'))
       end
+      {:results => results, :pagination => Util::pagination('BookList', doc)}
     end
 
     # Match fetching books by a search key.  Can be used to call ISBNDb::DB::books by using
@@ -63,7 +65,7 @@ module ISBNDb
         books = self.books(name.to_s.gsub(/book(s?)_by_/, ''), args.first)
         if name.to_s =~ /^book_/
           # We only want a single book, so return the first one
-          return books.first
+          return books[:results].first
         else
           # Return all results
           return books
@@ -84,6 +86,17 @@ module ISBNDb
       raise 'You need an API key at ISBNDb to use this gem' if ISBNDb::key.nil?
       params[:access_key] = ISBNDb::key
       URI.parse(ISBNDb::root_url + path + '?' + params.collect { |key, value| key.to_s + '=' + CGI.escape(value) }.join('&'))
+    end
+
+    # Returns the pagination parameters provided by the ISBNDb result
+    def self.pagination(list_element_name, doc)
+      list_element = doc.root.elements[list_element_name]
+      {
+        :total_results => list_element.attributes['total_results'],
+        :page_size => list_element.attributes['page_size'],
+        :page_number => list_element.attributes['page_number'],
+        :shown_results => list_element.attributes['shown_results']
+      }
     end
 
     # Fetch a resource from the ISBNDb API and parse the returned data as an XML document
