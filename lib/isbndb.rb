@@ -50,7 +50,8 @@ module ISBNDb
     def self.books(search_key, query)
       doc = Util::fetch_xml(Util::url('books.xml', {:index1 => search_key, :value1 => query}))
       results = XPath.match(doc.root, "BookList/BookData").collect do |node|
-        Book.new(node.text('Title'),
+        Book.new(node.attributes['book_id'],
+                 node.text('Title'),
                  node.text('TitleLong'),
                  node.text('AuthorsText'),
                  node.text('PublisherText'),
@@ -116,6 +117,6 @@ module ISBNDb
     end
   end
 
-  class Author < Struct.new(:isbndb_id, :name); end
-  class Book < Struct.new(:title, :title_long, :author, :publisher, :isbn13); end
+  class Author < Struct.new(:author_id, :name); end
+  class Book < Struct.new(:book_id, :title, :title_long, :author, :publisher, :isbn13); end
 end
