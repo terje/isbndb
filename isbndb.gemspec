@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["terje"]
-  s.date = %q{2009-12-21}
+  s.date = %q{2009-12-22}
   s.description = %q{This gem has convenience methods for querying the isbndb.com API.}
   s.email = %q{terje@tjervaag.com}
   s.extra_rdoc_files = [

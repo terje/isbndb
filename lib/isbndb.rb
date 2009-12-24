@@ -36,10 +36,13 @@ module ISBNDb
 
   class DB
     # Returns a list of Authors matching the provided search string
-    def self.authors(query)
-      doc = Util::fetch_xml(Util::url('authors.xml', {:index1 => 'name', :value1 => query}))
+    def self.authors(query, params = {})
+      doc = Util::fetch_xml(Util::url('authors.xml', {:index1 => 'name', :value1 => query}), params)
       results = XPath.match(doc.root, 'AuthorList/AuthorData').collect do |node|
-        Author.new(node.attributes['person_id'], node.text('Name').to_s)
+        {
+          :author_id => node.attributes['person_id'],
+          :name => node.text('Name').to_s
+        }
       end
       {:results => results, :pagination => Util::pagination('AuthorList', doc)}
     end
@@ -47,15 +50,17 @@ module ISBNDb
     # Returns a list of books matching the given search query.  The search_key can
     # be one of: isbn, title, combined, full, book_id, person_id, publisher_id,
     # subject_id, dewey_decimal, lcc_number
-    def self.books(search_key, query)
-      doc = Util::fetch_xml(Util::url('books.xml', {:index1 => search_key, :value1 => query}))
+    def self.books(search_key, query, params = {})
+      doc = Util::fetch_xml(Util::url('books.xml', {:index1 => search_key, :value1 => query}), params)
       results = XPath.match(doc.root, "BookList/BookData").collect do |node|
-        Book.new(node.attributes['book_id'],
-                 node.text('Title'),
-                 node.text('TitleLong'),
-                 node.text('AuthorsText'),
-                 node.text('PublisherText'),
-                 node.attributes['isbn13'])
+        {
+          :book_id => node.attributes['book_id'],
+          :title => node.text('Title'),
+          :title_long => node.text('TitleLong'),
+          :author => node.text('AuthorsText'),
+          :publisher => node.text('PublisherText'),
+          :isbn13 => node.attributes['isbn13']
+        }
       end
       {:results => results, :pagination => Util::pagination('BookList', doc)}
     end
@@ -67,7 +72,8 @@ module ISBNDb
     def self.method_missing(name, *args)
       if name.to_s =~ /^book(s?)_by_\w+$/
         # Fetch books using the provided search key
-        books = self.books(name.to_s.gsub(/book(s?)_by_/, ''), args.first)
+        params = if args[1].nil? then {} else args[1] end
+        books = self.books(name.to_s.gsub(/book(s?)_by_/, ''), args.first, params)
         if name.to_s =~ /^book_/
           # We only want a single book, so return the first one
           return books[:results].first
@@ -105,8 +111,9 @@ module ISBNDb
     end
 
     # Fetch a resource from the ISBNDb API and parse the returned data as an XML document
-    def self.fetch_xml(url)
+    def self.fetch_xml(url, params)
       # TODO: Error handling
+      url.query += '&page_number=' + params[:page].to_s unless params[:page].nil?
       request = Net::HTTP::Get.new(url.path + '?' + url.query, Util::headers)
       response = Net::HTTP.new(url.host, url.port).start { |http| http.request(request) }
       Document.new(response.body)
@@ -116,7 +123,4 @@ module ISBNDb
       { "User-Agent" => "Ruby v1.9.1" }
     end
   end
-
-  class Author < Struct.new(:author_id, :name); end
-  class Book < Struct.new(:book_id, :title, :title_long, :author, :publisher, :isbn13); end
 end
