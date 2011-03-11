@@ -1,13 +1,14 @@
-**This project is no longer maintained**. Please see Seth Vargo's isbdb gem: https://github.com/svargo/isbndb.
+# This project is no longer maintained
 
+Please see Seth Vargo's isbdb gem: https://github.com/svargo/isbndb.
 
 The following documentation and repository code is provided solely for reference.
 
-= isbndb
+# isbndb
 
 This gem is in **VERY** early development, but will provide an interface to the API at isbndb.com
 
-== Example usage
+## Example usage
 
     require 'ISBNDb'
     # Set up your ISBNDb key (Get one at http://isbndb.com/account/dev/keys/)
@@ -17,7 +18,7 @@ This gem is in **VERY** early development, but will provide an interface to the 
     # Get books by an author
     puts ISBNDb::DB::books_by_author('Dawkins, Richard')
 
-== Note on Patches/Pull Requests
+## Note on Patches/Pull Requests
  
 * Fork the project.
 * Make your feature addition or bug fix.
@@ -27,6 +28,6 @@ This gem is in **VERY** early development, but will provide an interface to the 
   (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
-== Copyright
+## Copyright
 
 Copyright (c) 2009 Terje Tjervaag. See LICENSE for details.
